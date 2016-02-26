@@ -1,0 +1,20 @@
+<ion-view view-title="Mapa">
+
+  <ion-content>
+
+    <leaflet controls="controls" data-tap-disabled="true" defaults="defaults" height="100%" layers="layers" lf-center="center" tiles="mapbox" width="100%"></leaflet>
+
+  </ion-content>
+  <ion-footer-bar class="bar-positive hide-on-keyboard-open">
+    <a class="button button-dark boton" ng-click="$emit('MyEvent1')">
+      Editar
+    </a>
+    <a class="button button-dark boton" ng-click="$emit('MyEvent2')">
+      Terminar edición
+    </a>
+    <a class="button button-dark boton" ng-click="$emit('MyEvent')">
+      Comenzar Línea
+    </a>
+
+  </ion-footer-bar>
+</ion-view>

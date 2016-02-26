@@ -1,0 +1,83 @@
+angular.module('gpsDraw.controllers', [])
+  /*------------
+  Controlador Mapa
+  --------------*/
+  .controller("MapboxGLController", ["$scope", "leafletData", function($scope, leafletData) {
+
+    angular.extend($scope, {
+      center: {
+        lat: 51.505,
+        lng: -0.04,
+        zoom: 13
+      },
+
+      layers: {
+        //Añadir al grupo la capa de dibujo
+        overlays: {
+          draw: {
+            name: 'draw',
+            type: 'featureGroup',
+            visible: true,
+            layerParams: {
+              showOnSelector: false
+            }
+          }
+        }
+      },
+      mapbox: {
+        name: 'Mapbox Light',
+        url: 'http://api.tiles.mapbox.com/v4/{mapid}/{z}/{x}/{y}@2x.png?access_token={apikey}',
+        type: 'mapbox',
+        options: {
+          apikey: 'pk.eyJ1IjoibXJlZHByb2NvZGUiLCJhIjoiY2lpemY0aDYyMDA0Z3VkbHdxa3BudnJpMiJ9.PMtn2mheSO79sACxOri8fw',
+          mapid: "mapbox.streets"
+        }
+      },
+      defaults: {
+        zoomControl: false
+      },
+      controls: {
+        custom: new L.Control.Draw({
+          edit: {
+            featureGroup: new L.FeatureGroup('draw')
+          },
+          draw: {
+            polygon: {
+              shapeOptions: {
+                color: 'purple'
+              }
+            },
+            circle: {
+              shapeOptions: {
+                stroke: true,
+                weight: 4,
+                color: 'blue',
+                opacity: 0.5,
+                fill: true,
+                fillColor: null, //same as color by default
+                fillOpacity: 0.2,
+                clickable: true
+              }
+            }
+          },
+          showRadius: true
+        })
+      }
+    });
+    //Requiero al mapa
+    leafletData.getMap().then(function(map) {
+      //Mandame las capas incuyendo las sobre
+      //map.addLayer(drawnItems);
+
+      leafletData.getLayers().then(function(baselayers) {
+        //variable donde se definen los dibujos
+        var drawnItems = baselayers.overlays.draw;
+        map.on('draw:created', function(e) {
+          var layer = e.layer;
+          drawnItems.addLayer(layer);
+          console.log(JSON.stringify(layer.toGeoJSON()));
+        });
+      });
+    });
+
+  }])
